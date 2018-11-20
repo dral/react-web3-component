@@ -8,6 +8,7 @@ const htmlWebpackPlugin = new HtmlWebpackPlugin({
 
 module.exports = {
   entry: path.join(__dirname, 'demo/index.js'),
+  devtool: 'source-map',
   module: {
     rules: [
       {
