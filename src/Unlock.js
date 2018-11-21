@@ -24,8 +24,8 @@ const defaultRenderer = ({unlockAction, disabled}) => (
 );
 
 const Unlock = ({
-  password,
-  duration,
+  password = '',
+  duration = 0,
   onUnlock = () => {},
   onError = () => {},
   children

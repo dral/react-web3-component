@@ -1,12 +1,15 @@
 import React from 'react';
 import { render} from 'react-dom';
-import Sign from '../src/Sign';
-import SelectedAccount from '../src/SelectedAccount';
-import NewAccount from '../src/NewAccount';
-import Accounts from '../src/Accounts';
-import Unlock from '../src/Unlock';
-import Web3Provider from '../src/Web3Context';
 import Web3 from 'web3';
+
+import {
+  Sign,
+  SelectedAccount,
+  NewAccount,
+  Accounts,
+  Unlock,
+  Web3Provider,
+} from '../src';
 
 let wsWeb3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8546'));
 

@@ -24,7 +24,7 @@ const defaultRenderer = ({accounts, selectedAccount, updateAccounts}) => {
   );
 };
 
-const Address = ({children}) => (
+const Accounts = ({children}) => (
   <Web3Context.Consumer>
     {({
       selectedAccount,
@@ -41,8 +41,8 @@ const Address = ({children}) => (
   </Web3Context.Consumer>
 );
 
-Address.propTypes = {
+Accounts.propTypes = {
   children: PropTypes.func,
 };
 
-export default Address;
+export default Accounts;

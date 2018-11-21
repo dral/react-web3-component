@@ -21,7 +21,7 @@ const defaultRenderer = ({newAccountAction}) => (
 );
 
 const NewAccount = ({
-  password,
+  password = '',
   onCreate = () => {},
   onError = () => {},
   children
