@@ -88,36 +88,95 @@ Exposes a `Web3Context` provider which gives access to an object containing:
 
 ### `Sign`
 
+Sign a message with the selected account.
+
 Params:
 
-`message`: The message to be signed, this can be either a `string` or a `Buffer` (default `''`).
-`password`: The password (if needed). This is needed for accounts protected with password as in `geth` accounts when using a WebSocket provider. Metamask doesn't need a password.
-`onSign`: A callback for accessing the resulting signature (default `() => {}`). The signature result is an object of the form:
-`onSign`: A callback for accessing the resulting signature (default `() => {}`). The signature result is an object of the form:
+- `message`: The message to be signed, this can be either a `string` or a `Buffer` (default `''`).
+- `password`: The password (if needed). This is needed for accounts protected with password as in `geth` accounts when using a WebSocket provider. Metamask doesn't need a password.
+- `onSign`: A callback for accessing the resulting signature (default `() => {}`). The signature result is an object of the form:
 
-```
-  {
-    signature,  // The hex formatted signature as returned by web3
-    signedBy,   // The account that signed the message
-    message,    // The original message
-    hexMessage, // The hex formatted message
-  }
-```
+  ```
+    {
+      signature,  // The hex formatted signature as returned by web3
+      signedBy,   // The account that signed the message
+      message,    // The original message
+      hexMessage, // The hex formatted message
+    }
+  ```
 
-`onError`: A callback for handling errors if any (default `() => {}`). This function receives a single parameter, the error message.
+- `onError`: A callback for handling errors if any (default `() => {}`). This function receives a single parameter, the error message.
 
 Child function:
 
 The child function for custom rendering receives an object containing:
-`message`: The message to be signed.
-`disabled`: `true` if no account selected, `false` otherwise.
-`selectedAccount`: The account that will sign the message.
-`signAction`: The action that, when triggered, will request the signature.
+
+- `message`: The message to be signed.
+- `disabled`: `true` if no account selected, `false` otherwise.
+- `selectedAccount`: The account that will sign the message.
+- `signAction`: The action that, when triggered, will request the signature.
 
 ### `SelectedAccount`
 
+Shows the currently selected account.
+
+Params:
+
+- none
+
+Child function:
+
+The child function for custom rendering receives an object containing:
+
+- `selectedAccount`: The selected address.
+
 ### `Accounts`
+
+Shows the list of available accounts and allows to select an account when many available (such as when connecting to a `geth` instance with a WebSocket web3 provider).
+
+Params:
+
+- none
+
+Child function:
+
+The child function for custom rendering receives an object containing:
+
+- `selectedAccount`: The selected address.
+- `accounts`: An array of all available accounts.
+- `updateAccounts`: A function to set the selected account and update the list of available accounts.
 
 ### `NewAccount`
 
+Creates a new account and if succeeds, sets it as the selected account (Doesn't work with Metamask).
+
+Params:
+- `password`: The password for the newly created account (default `''`)
+- `onCreate`: A callback for accessing the newly created account (default `() => {}`). This function receives a single parameter, the new address.
+- `onError`: A callback for handling errors if any (default `() => {}`). This function receives a single parameter, the error message.
+
+Child function:
+
+The child function for custom rendering receives an object containing:
+
+- `newAccountAction`: The action that, when triggered, will create a new account.
+
 ### `Unlock`
+
+Unlock the selected account (Doesn't work with Metamask).
+
+Params:
+
+- `password`: The password for unlocking the account (default `''`).
+- `duration`: The duration for unlocking the account (default `0`).
+- `onUnlock`: A callback called when the account was unlocked (default `() => {}`). This function receives a single parameter, `true` if the account was unlocked.
+- `onError`: A callback for handling errors if any (default `() => {}`). This function receives a single parameter, the error message.
+
+Child function:
+
+The child function for custom rendering receives an object containing:
+
+- `selectedAccount`: The selected address.
+- `duration`: The duration for unlocking the account.
+- `unlockAction`: The action that, when triggered, will request the account unlocking.
+- `disabled`: `true` if no account selected, `false` otherwise.
