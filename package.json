@@ -18,7 +18,10 @@
   "keywords": [
     "react",
     "web3",
-    "react-component"
+    "react-component",
+    "metamask",
+    "geth",
+    "dapps"
   ],
   "author": "Draltan MARIN <moi@draltan.com>",
   "license": "MIT",

@@ -81,10 +81,10 @@ Params:
 
 Exposes a `Web3Context` provider which gives access to an object containing:
 
-`web3`: The instance of web3 used by this provider.
-`selectedAccount`: The selected account.
-`accounts`: An array of all available accounts.
-`updateAccounts`: A function to force update of the accounts state. This function receives a single optional parameter to specify the account that should be selected. If `null` the selected account will use the first available account.
+- `web3`: The instance of web3 used by this provider.
+- `selectedAccount`: The selected account.
+- `accounts`: An array of all available accounts.
+- `updateAccounts`: A function to force update of the accounts state. This function receives a single optional parameter to specify the account that should be selected. If `null` the selected account will use the first available account.
 
 ### `Sign`
 
