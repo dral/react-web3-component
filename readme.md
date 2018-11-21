@@ -75,9 +75,9 @@ Handles update events and Metamask account access requests. Initializes and mana
 
 Params:
 
-`web3`: Specifies the web3 instance to use (default `new Web3(Web3.givenProvider)`).
-`onUpdate`: A callback triggered each time accounts state changes.
-`logger`: Possibly a custom logger handler.
+- `web3`: Specifies the web3 instance to use (default `new Web3(Web3.givenProvider)`).
+- `onUpdate`: A callback triggered each time accounts state changes.
+- `logger`: Possibly a custom logger handler.
 
 Exposes a `Web3Context` provider which gives access to an object containing:
 
