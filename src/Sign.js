@@ -1,18 +1,23 @@
 import React from 'react';
 import { Web3Context } from './Web3Context';
 
-const signAction = (web3, onError, onSign) => (account, message) => {
+const sign = (web3, onSign, onError, account, message, password) => () => {
   let signature;
-  web3.eth.personal.sign(message, account)
+  account = web3.utils.toChecksumAddress(account);
+  web3.eth.personal.sign(message, account, password)
     .then(sig => {
       signature = sig;
       return web3.eth.personal.ecRecover(message, sig);
     })
     .then(signedBy => {
-      if (signedBy !== account) {
+      if (web3.utils.toChecksumAddress(signedBy) !== account) {
         throw new Error('Signature validation error');
       } else {
-        onSign(signature);
+        onSign({
+          signature,
+          signedBy,
+          message,
+        });
       }
     })
     .catch((error) => {
@@ -23,31 +28,31 @@ const signAction = (web3, onError, onSign) => (account, message) => {
     });
 };
 
+const defaultRenderer = ({signAction, disabled}) => (
+  <button
+    disabled={disabled}
+    onClick={signAction}
+  >
+    Sign
+  </button>
+);
+
 const Sign = ({
-  message = '',
-  onSign = () => {},
-  onError = () => {},
+  message = '', // either a string or a buffer
+  password,
+  onSign = console.log,
+  onError = console.error,
+  render = defaultRenderer
 }) => (
   <Web3Context.Consumer>
     {({
       web3,
       selectedAddress
     }) => {
-      // let onSign = signature => console.log(signature);
-      // let onError = message => console.error(message);
-      let sign = signAction(web3, onError, onSign);
       let hexMessage = `0x${Buffer.from(message).toString('hex')}`;
-      return (
-        <div>
-          <code>{message}</code>
-          <button
-            disabled={selectedAddress === undefined}
-            onClick={() => sign(selectedAddress, hexMessage)}
-          >
-            Sign
-          </button>
-        </div>
-      );
+      let signAction = sign(web3, onSign, onError, selectedAddress, hexMessage, password);
+      let disabled = selectedAddress === undefined;
+      return render({signAction, disabled, message, hexMessage, selectedAddress});
     }}
   </Web3Context.Consumer>
 );
