@@ -1,10 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Web3Context } from './Web3Context';
 
 const sign = (web3, onSign, onError, account, message, password) => () => {
   let signature;
+  let hexMessage = `0x${Buffer.from(message).toString('hex')}`;
   account = web3.utils.toChecksumAddress(account);
-  web3.eth.personal.sign(message, account, password)
+  web3.eth.personal.sign(hexMessage, account, password)
     .then(sig => {
       signature = sig;
       return web3.eth.personal.ecRecover(message, sig);
@@ -17,14 +19,13 @@ const sign = (web3, onSign, onError, account, message, password) => () => {
           signature,
           signedBy,
           message,
+          hexMessage,
         });
       }
     })
-    .catch((error) => {
+    .catch(error => {
       let message = error.message.split('\n')[0];
-      if (onError){
-        onError(message);
-      }
+      onError(message);
     });
 };
 
@@ -40,21 +41,30 @@ const defaultRenderer = ({signAction, disabled}) => (
 const Sign = ({
   message = '', // either a string or a buffer
   password,
-  onSign = console.log,
-  onError = console.error,
-  render = defaultRenderer
+  onSign = () => {},
+  onError = () => {},
+  children,
 }) => (
   <Web3Context.Consumer>
     {({
       web3,
-      selectedAddress
+      selectedAccount
     }) => {
-      let hexMessage = `0x${Buffer.from(message).toString('hex')}`;
-      let signAction = sign(web3, onSign, onError, selectedAddress, hexMessage, password);
-      let disabled = selectedAddress === undefined;
-      return render({signAction, disabled, message, hexMessage, selectedAddress});
+      let signAction = sign(web3, onSign, onError, selectedAccount, message, password);
+      let disabled = selectedAccount === undefined;
+      let renderer = children || defaultRenderer;
+      return renderer({
+        message,
+        disabled,
+        selectedAccount,
+        signAction,
+      });
     }}
   </Web3Context.Consumer>
 );
+
+Sign.propTypes = {
+  children: PropTypes.func,
+};
 
 export default Sign;

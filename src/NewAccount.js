@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Web3Context } from './Web3Context';
 
 const newAccount = (web3, onCreate, onError, updateAccounts, password) => () => {
@@ -7,27 +8,23 @@ const newAccount = (web3, onCreate, onError, updateAccounts, password) => () => 
       updateAccounts(result);
       onCreate(result);
     })
-    .catch((error) => {
+    .catch(error => {
       let message = error.message.split('\n')[0];
-      if (onError){
-        onError(message);
-      }
+      onError(message);
     });
 };
 
 const defaultRenderer = ({newAccountAction}) => (
-  <button
-    onClick={newAccountAction}
-  >
+  <button onClick={newAccountAction}>
     New Account
   </button>
 );
 
 const NewAccount = ({
   password,
-  onCreate = console.log,
-  onError = console.error,
-  render = defaultRenderer
+  onCreate = () => {},
+  onError = () => {},
+  children
 }) => (
   <Web3Context.Consumer>
     {({
@@ -41,9 +38,16 @@ const NewAccount = ({
         updateAccounts,
         password
       );
-      return render({newAccountAction});
+      let renderer = children || defaultRenderer;
+      return renderer({
+        newAccountAction
+      });
     }}
   </Web3Context.Consumer>
 );
+
+NewAccount.propTypes = {
+  children: PropTypes.func,
+};
 
 export default NewAccount;

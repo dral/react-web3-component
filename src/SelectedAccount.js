@@ -1,23 +1,28 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Web3Context } from './Web3Context';
 
-const defaultRenderer = ({selectedAddress, disabled}) => {
+const defaultRenderer = ({selectedAccount}) => {
   return (
-    <code>{disabled ? 'no address' : selectedAddress}</code>
+    <code>{selectedAccount ? selectedAccount :  'no address' }</code>
   );
 };
 
-const SelectedAccount = ({
-  render = defaultRenderer
-}) => (
+const SelectedAccount = ({children}) => (
   <Web3Context.Consumer>
     {({
-      selectedAddress
+      selectedAccount
     }) => {
-      let disabled = selectedAddress === undefined;
-      return render({selectedAddress, disabled});
+      let renderer = children || defaultRenderer;
+      return renderer({
+        selectedAccount
+      });
     }}
   </Web3Context.Consumer>
 );
+
+SelectedAccount.propTypes = {
+  children: PropTypes.func,
+};
 
 export default SelectedAccount;

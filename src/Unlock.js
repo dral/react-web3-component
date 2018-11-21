@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Web3Context } from './Web3Context';
 
 const unlock = (web3, onUnlock, onError, account, password, duration) => () => {
@@ -7,11 +8,9 @@ const unlock = (web3, onUnlock, onError, account, password, duration) => () => {
     .then(result => {
       onUnlock(result);
     })
-    .catch((error) => {
+    .catch(error => {
       let message = error.message.split('\n')[0];
-      if (onError){
-        onError(message);
-      }
+      onError(message);
     });
 };
 
@@ -27,20 +26,30 @@ const defaultRenderer = ({unlockAction, disabled}) => (
 const Unlock = ({
   password,
   duration,
-  onUnlock = console.log,
-  onError = console.error,
-  render = defaultRenderer
+  onUnlock = () => {},
+  onError = () => {},
+  children
 }) => (
   <Web3Context.Consumer>
     {({
       web3,
-      selectedAddress
+      selectedAccount
     }) => {
-      let unlockAction = unlock(web3, onUnlock, onError, selectedAddress, password, duration);
-      let disabled = selectedAddress === undefined;
-      return render({unlockAction, disabled});
+      let unlockAction = unlock(web3, onUnlock, onError, selectedAccount, password, duration);
+      let disabled = selectedAccount === undefined;
+      let renderer = children || defaultRenderer;
+      return renderer({
+        selectedAccount,
+        duration,
+        unlockAction,
+        disabled
+      });
     }}
   </Web3Context.Consumer>
 );
+
+Unlock.propTypes = {
+  children: PropTypes.func,
+};
 
 export default Unlock;

@@ -5,23 +5,21 @@ let defaultWeb3 = new Web3(Web3.givenProvider);
 
 export const Web3Context = React.createContext({
   defaultWeb3,
-  selectedAddress: undefined,
+  selectedAccount: undefined,
   accounts: [],
   selectAccount: () => {}
 });
 
-class Web3Component extends React.Component {
-  constructor({web3 = defaultWeb3}) {
+class Web3Provider extends React.Component {
+  constructor({web3 = defaultWeb3, logger = console}) {
     super();
     this.updateAccounts = this.updateAccounts.bind(this);
-    this.selectAccount = this.selectAccount.bind(this);
     this.initMetamask = this.initMetamask.bind(this);
-
+    this.logger = logger;
     this.state = {
       web3,
-      selectedAddress: undefined,
+      selectedAccount: undefined,
       accounts: [],
-      selectAccount: this.selectAccount,
       updateAccounts: this.updateAccounts,
     };
 
@@ -37,17 +35,18 @@ class Web3Component extends React.Component {
   }
 
   initMetamask(){
-    let {web3} = this.state;
+    let { web3 } = this.state;
     web3.currentProvider.publicConfigStore.on('update', () => this.updateAccounts());
     web3.currentProvider.enable()
       .then(accounts => accounts.map(web3.utils.toChecksumAddress))
       .then(accounts => {
-        this.setState({
-          selectedAddress: accounts[0],
+        let update = {
+          selectedAccount: accounts[0],
           accounts
-        });
+        };
+        this.setState(update);
       })
-      .catch(console.error);
+      .catch(this.logger.error);
   }
 
   updateAccounts(account) {
@@ -57,15 +56,15 @@ class Web3Component extends React.Component {
     web3.eth.getAccounts()
       .then(accounts => accounts.map(web3.utils.toChecksumAddress))
       .then(accounts => {
-        let selectedAddress = accounts[0];
+        let selectedAccount = accounts[0];
         if (account) {
           account = web3.utils.toChecksumAddress(account);
           if (accounts.indexOf(account) >= 0) {
-            selectedAddress = account;
+            selectedAccount = account;
           }
         }
         let update = {
-          selectedAddress,
+          selectedAccount,
           accounts
         };
         this.setState(update);
@@ -73,7 +72,7 @@ class Web3Component extends React.Component {
           onUpdate(update);
         }
       })
-      .catch(console.error);
+      .catch(this.logger.error);
   }
 
   render() {
@@ -85,4 +84,4 @@ class Web3Component extends React.Component {
   }
 }
 
-export default Web3Component;
+export default Web3Provider;
